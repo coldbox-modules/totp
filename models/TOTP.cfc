@@ -167,17 +167,10 @@ component singleton {
      * @returns The decimal representation of the two numbers after a bitwise and operation.
      */
     private string function _bitAnd( required numeric one, required numeric two ) {
-        var oneBinary = decimalToBinary( arguments.one );
-        var twoBinary = decimalToBinary( arguments.two );
-        var maxLength = max( len( oneBinary ), len( twoBinary ) );
-        oneBinary = leftPad( oneBinary, maxLength, "0" );
-        twoBinary = leftPad( twoBinary, maxLength, "0" );
-        var andBinary = "";
-        for ( var i = 1; i <= maxLength; i++ ) {
-            var bothOnes = mid( oneBinary, i, 1 ) == 1 && mid( twoBinary, i, 1 ) == 1;
-            andBinary &= ( bothOnes ? 1 : 0 );
-        }
-        return binaryToDecimal( andBinary );
+        var oneBigInt = createObject( "java", "java.math.BigInteger" ).init( arguments.one );
+        var twoBigInt = createObject( "java", "java.math.BigInteger" ).init( arguments.two );
+        var andBigInt = oneBigInt.and( twoBigInt );
+        return andBigInt.intValue();
     }
 
 }
