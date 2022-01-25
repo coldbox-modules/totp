@@ -1,0 +1,34 @@
+{
+    "name":"totp",
+    "version":"0.0.0",
+    "author":"Eric Peterson <eric@elpete.com>",
+    "location":"forgeboxStorage",
+    "homepage":"https://github.com/coldbox-modules/totp",
+    "documentation":"https://github.com/coldbox-modules/totp",
+    "repository":{
+        "type":"git",
+        "URL":"https://github.com/coldbox-modules/totp"
+    },
+    "bugs":"https://github.com/coldbox-modules/totp/issues",
+    "slug":"totp",
+    "shortDescription":"A CFML implementation of Time-based One-time Passwords",
+    "description":"A CFML implementation of Time-based One-time Passwords",
+    "type":"modules",
+    "dependencies":{},
+    "devDependencies":{
+        "testbox":"stable"
+    },
+    "installPaths":{
+        "testbox":"testbox/"
+    },
+    "scripts":{
+        "format":"cfformat run ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc,tests/resources/app/handlers/**/*.cfc,tests/resources/app/config/**/*.cfc --overwrite",
+        "format:check":"cfformat check ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc,tests/resources/app/handlers/**/*.cfc,tests/resources/app/config/**/*.cfc --verbose",
+        "format:watch":"cfformat watch ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc,tests/resources/app/handlers/**/*.cfc,tests/resources/app/config/**/*.cfc"
+    },
+    "ignore":[
+        "**/.*",
+        "test",
+        "tests"
+    ]
+}
