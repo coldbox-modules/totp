@@ -26,7 +26,7 @@ component output=false hint="I provide encoding and decoding methods for Base32 
      * @output false
      * @hint The input string is assumed to be utf-8.
      */
-    public string function decode( required string input, boolean toString = false, string encoding = "utf-8" ) {
+    public any function decode( required string input, boolean toString = false, string encoding = "utf-8" ) {
         var binaryOutput = decodeBinary( charsetDecode( uCase( arguments.input ), arguments.encoding ) );
         return arguments.toString ? charsetEncode( binaryOutput, arguments.encoding ) : binaryOutput;
     }
@@ -130,7 +130,7 @@ component output=false hint="I provide encoding and decoding methods for Base32 
      * @output false
      * @hint The input string is assumed to be utf-8.
      */
-    public string function encode( required any input, boolean toString = true, string encoding = "utf-8" ) {
+    public any function encode( required any input, boolean toString = true, string encoding = "utf-8" ) {
         if ( !isBinary( arguments.input ) ) {
             arguments.input = charsetDecode( uCase( arguments.input ), arguments.encoding );
         }
