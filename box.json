@@ -15,7 +15,7 @@
     "description":"A CFML implementation of Time-based One-time Passwords",
     "type":"modules",
     "dependencies":{
-        "CFzxing":"^1.0.0"
+        "CFzxing":"^1.1.0"
     },
     "devDependencies":{
         "testbox":"stable"
