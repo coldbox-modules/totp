@@ -1,10 +1,40 @@
-component singleton {
+component singleton accessors="true" {
+
+    property name="secureRandom";
+    property name="instant";
+    property name="base32";
+    property name="barcodeService" inject="Barcode@CFzxing";
 
     public TOTP function init() {
         variables.secureRandom = createObject( "java", "java.security.SecureRandom" ).init();
         variables.instant = createObject( "java", "java.time.Instant" );
         variables.base32 = new Base32();
         return this;
+    }
+
+    /**
+     * Generates a secret, authenticator url, and a QR code for a given email and issuer.
+     *
+     * @email    The email address of the user associated with this secret.
+     * @issuer   The name of the issuer of this secret.
+     * @length   The length of the secret key. Default: 32
+     * @width    The width of the QR code. Default: 128.
+     * @height   The height of the QR code. Default: 128.
+     *
+     * @returns  A struct containing a `secret`, a `url`, and a `qrCode`.
+     */
+    public struct function generate(
+        required string email,
+        required string issuer,
+        numeric length = 32,
+        numeric width = 128,
+        numeric height = 128
+    ) {
+        var config = {};
+        config[ "secret" ] = generateSecret( arguments.length );
+        config[ "url" ] = generateUrl( arguments.email, arguments.issuer, config.secret );
+        config[ "qrCode" ] = generateQRCode( config.url, arguments.width, arguments.height );
+        return config;
     }
 
     /**
@@ -25,6 +55,57 @@ component singleton {
         var bytes = javacast( "byte[]", initialBytes );
         variables.secureRandom.nextBytes( bytes );
         return variables.base32.encode( bytes );
+    }
+
+    /**
+     * Generates a URL to use with authenticator apps containing the email, issuer, and generated secret key.
+     * It is also recommended that you have the user verify a code using the secret before saving the secret.
+     *
+     * @email   The email address of the user associated with this secret.
+     * @issuer  The name of the issuer of this secret.
+     * @secret  The Base32 string to use as a secret key when generating and verifying TOTPs.
+     *
+     * @returns A URL for use in authenticator apps.
+     */
+    public string function generateUrl( required string email, required string issuer, required string secret ) {
+        return arrayToList(
+            [
+                "otpauth://totp/",
+                encodeForURL( arguments.issuer ),
+                ":",
+                arguments.email,
+                "?secret=",
+                arguments.secret,
+                "&issuer=",
+                encodeForURL( arguments.issuer )
+            ],
+            ""
+        );
+    }
+
+    /**
+     * Generates a QR Code to use with authenticator apps containing the authenticator url.
+     *
+     * @authenticatorUrl  The authenticator url to encode in a QR code, usually from calling `generateUrl`.
+     * @width             The width of the QR code. Default: 128.
+     * @height            The height of the QR code. Default: 128.
+     *
+     * @returns           An Image containing the QR code.
+     */
+    function generateQRCode( required string authenticatorUrl, numeric width = 128, numeric height = 128 ) {
+        if ( isNull( variables.barcodeService ) ) {
+            throw(
+                type = "totp.MissingBarcodeService",
+                message = "No barcodeService configured. Please set one using the `setBarcodeService` method. (We recommend CFzxing.)"
+            );
+        }
+
+        return variables.barcodeService.getBarcodeImage(
+            contents = arguments.authenticatorUrl,
+            type = "QR_CODE",
+            width = arguments.width,
+            height = arguments.height
+        );
     }
 
     /**

@@ -14,12 +14,15 @@
     "shortDescription":"A CFML implementation of Time-based One-time Passwords",
     "description":"A CFML implementation of Time-based One-time Passwords",
     "type":"modules",
-    "dependencies":{},
+    "dependencies":{
+        "CFzxing":"^1.0.0"
+    },
     "devDependencies":{
         "testbox":"stable"
     },
     "installPaths":{
-        "testbox":"testbox/"
+        "testbox":"testbox/",
+        "CFzxing":"modules/CFzxing/"
     },
     "scripts":{
         "format":"cfformat run ModuleConfig.cfc,models/**/*.cfc,tests/specs/**/*.cfc,tests/resources/app/handlers/**/*.cfc,tests/resources/app/config/**/*.cfc --overwrite",
