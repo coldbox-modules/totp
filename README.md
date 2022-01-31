@@ -23,6 +23,23 @@ Obtain a new instance of TOTP using WireBox or simplying by creating a new insta
 
 > WireBox/ColdBox is **NOT** required to use this module.
 
+You can view an example of using this library by viewing the `index.cfm`
+file in the root of this module.
+
+#### `generate`
+
+Generates a secret, authenticator url, and a QR code for a given email and issuer.
+The `secret` should be stored securely and associated to the user who created it.
+It is also recommended that you have the user verify a code using the secret before saving the secret.
+
+| Name   | Type    | Required | Default | Description                                                |
+| ------ | ------- | -------- | ------- | ---------------------------------------------------------- |
+| email  | string  | true     |         | The email address of the user associated with this secret. |
+| issuer | string  | true     |         | The name of the issuer of this secret.                     |
+| length | numeric | false    | 32      | The length of the secret key.                              |
+| width  | numeric | false    | 128     | The width of the QR code.                                  |
+| height | numeric | false    | 128     | The height of the QR code.                                 |
+
 #### `generateSecret`
 
 Generates a Base32 string to use as a secret key when generating and verifying TOTPs.
@@ -32,6 +49,26 @@ It is also recommended that you have the user verify a code using the secret bef
 | Name   | Type    | Required | Default | Description                   |
 | ------ | ------- | -------- | ------- | ----------------------------- |
 | length | numeric | false    | 32      | The length of the secret key. |
+
+#### `generateUrl`
+
+Generates a URL to use with authenticator apps containing the email, issuer, and generated secret key.
+
+| Name   | Type    | Required | Default | Description                                                |
+| ------ | ------- | -------- | ------- | ---------------------------------------------------------- |
+| email  | string  | true     |         | The email address of the user associated with this secret. |
+| issuer | string  | true     |         | The name of the issuer of this secret.                     |
+| length | numeric | false    | 32      | The length of the secret key.                              |
+
+#### `generateQRCode`
+
+Generates a QR Code to use with authenticator apps containing the authenticator url.
+
+| Name             | Type    | Required | Default | Description                                                                       |
+| ---------------- | ------- | -------- | ------- | --------------------------------------------------------------------------------- |
+| authenticatorUrl | string  | true     |         | The authenticator url to encode in a QR code, usually from calling `generateUrl`. |
+| width            | numeric | false    | 128     | The width of the QR code.                                                         |
+| height           | numeric | false    | 128     | The height of the QR code.                                                        |
 
 #### `generateCode`
 

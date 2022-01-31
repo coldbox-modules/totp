@@ -2,6 +2,13 @@ component extends="testbox.system.BaseSpec" {
 
     function beforeAll() {
         variables.totp = new totp.models.TOTP();
+        var barcodeService = new CFzxing.models.Barcode();
+        barcodeService.setJavaloader( {
+            "create": function( path ) {
+                return createObject( "java", path );
+            }
+        } );
+        variables.totp.setBarcodeService( barcodeService );
     }
 
     function run() {
@@ -122,10 +129,59 @@ component extends="testbox.system.BaseSpec" {
                 } );
             } );
 
+            describe( "generateUrl", function() {
+                it( "generates a url for use in authenticator apps", function() {
+                    var email = "john@example.com";
+                    var issuer = "Example Company";
+                    var secret = variables.totp.generateSecret();
+                    var totpUrl = variables.totp.generateUrl(
+                        email = email,
+                        issuer = "Example Company",
+                        secret = secret
+                    );
+                    expect( totpUrl ).toBe(
+                        "otpauth://totp/#encodeForURL( issuer )#:#email#?secret=#secret#&issuer=#encodeForURL( issuer )#"
+                    );
+                } );
+            } );
+
+            describe( "generateQRCode", function() {
+                it( "generates a qr code for use in authenticator apps", function() {
+                    var email = "john@example.com";
+                    var issuer = "Example Company";
+                    var secret = variables.totp.generateSecret();
+                    var totpUrl = variables.totp.generateUrl(
+                        email = email,
+                        issuer = "Example Company",
+                        secret = secret
+                    );
+                    var qrCode = variables.totp.generateQrCode( totpUrl );
+                    expect( isImage( qrCode ) ).toBeTrue( "An image should have been returned" );
+                    expect( variables.totp.getBarcodeService().decode( qrCode ) ).toBe( totpUrl );
+                } );
+            } );
+
             it( "can use a generated secret to generate and verify a code", function() {
                 var secret = variables.totp.generateSecret();
                 var code = variables.totp.generateCode( secret );
                 expect( variables.totp.verifyCode( secret, code ) ).toBeTrue();
+            } );
+
+            it( "can generate a secret and a url and a qr code all at once", function() {
+                var email = "john@example.com";
+                var issuer = "Example Company";
+                var config = variables.totp.generate( email, issuer );
+                expect( config ).toBeStruct();
+                expect( config ).toHaveKey( "secret" );
+                expect( config.secret ).toHaveLength( 32 );
+                expect( config.secret ).toMatchWithCase( "^[A-Z2-7]+=*$", "Secret must be a valid Base32 string." );
+                expect( config ).toHaveKey( "url" );
+                expect( config.url ).toBe(
+                    "otpauth://totp/#encodeForURL( issuer )#:#email#?secret=#config.secret#&issuer=#encodeForURL( issuer )#"
+                );
+                expect( config ).toHaveKey( "qrCode" );
+                expect( isImage( config.qrCode ) ).toBeTrue( "An image should have been returned" );
+                expect( variables.totp.getBarcodeService().decode( config.qrCode ) ).toBe( config.url );
             } );
         } );
     }
