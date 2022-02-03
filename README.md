@@ -70,6 +70,18 @@ Generates a QR Code to use with authenticator apps containing the authenticator 
 | width            | numeric | false    | 128     | The width of the QR code.                                                         |
 | height           | numeric | false    | 128     | The height of the QR code.                                                        |
 
+#### `generateRecoveryCodes`
+
+Generates an array of recovery codes.
+
+Each code composed of numbers and lower case characters from latin alphabet (36 possible characters).
+The code is split in groups separated with dash for better readability.
+For example: `4ckn-xspn-et8t-xgr0`
+
+| Name   | Type    | Required | Default | Description                      |
+| ------ | ------- | -------- | ------- | -------------------------------- |
+| amount | numeric | true     |         | The amount of codes to generate. |
+
 #### `generateCode`
 
 Generates a Time-based One-time Password (TOTP) for a given secret.

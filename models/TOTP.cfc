@@ -109,6 +109,59 @@ component singleton accessors="true" {
     }
 
     /**
+     * Generates an array of recovery codes.
+     *
+     * @amount   The amount of codes to generate.
+     *
+     * @returns  An array of recovery codes.
+     */
+    public array function generateRecoveryCodes( required numeric amount ) {
+        if ( arguments.amount <= 0 ) {
+            throw(
+                type = "totp.InvalidRecoveryCodeAmount",
+                message = "You must generate a positive amount of recovery codes."
+            );
+        }
+
+        var codes = [];
+        for ( var i = 1; i <= arguments.amount; i++ ) {
+            codes.append( generateRecoveryCode() );
+        }
+        return codes;
+    }
+
+    /**
+     * Generates a code composed of numbers and lower case characters from latin alphabet (36 possible characters).
+     * The code is split in groups separated with dash for better readability.
+     * For example: `4ckn-xspn-et8t-xgr0`
+     *
+     * Recovery codes must reach a minimum entropy to be secured
+     * `code entropy = log( {characters-count} ^ {code-length} ) / log(2)`
+     * The settings used below allows the code to reach an entropy of 82 bits :
+     * log(36^16) / log(2) == 82.7...
+     *
+     * @returns  A recovery code string.
+     */
+    private string function generateRecoveryCode() {
+        var CODE_LENGTH = 16;
+        var GROUPS_NUMBER = 4;
+        var CHARACTERS = listToArray( "abcdefghijklmnopqrstuvwxyz0123456789", "" );
+        var CHARACTERS_LENGTH = CHARACTERS.len();
+
+        var code = "";
+        for ( var i = 1; i <= CODE_LENGTH; i++ ) {
+            // Append random character from authorized ones
+            code &= CHARACTERS[ variables.secureRandom.nextInt( CHARACTERS_LENGTH ) + 1 ];
+            // Split code into groups for increased readability
+            if ( i % GROUPS_NUMBER == 0 && i != CODE_LENGTH ) {
+                code &= "-";
+            }
+        }
+
+        return code;
+    }
+
+    /**
      * Generates a TOTP for a given secret.
      *
      * @secret     The Base32 string to use when generating the code.

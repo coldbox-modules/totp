@@ -161,6 +161,35 @@ component extends="testbox.system.BaseSpec" {
                 } );
             } );
 
+            describe( "generateRecoveryCodes", function() {
+                it( "generates human-readable recovery codes", function() {
+                    var codes = variables.totp.generateRecoveryCodes( 4 );
+                    expect( codes ).toBeArray();
+                    expect( codes ).toHaveLength( 4 );
+
+                    var uniqueCodes = {};
+                    for ( var code in codes ) {
+                        expect( code ).toMatchWithCase(
+                            "[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}",
+                            "Recovery code does not match the expected format."
+                        );
+                        uniqueCodes[ code ] = "";
+                    }
+
+                    expect( uniqueCodes ).toHaveLength( 4, "All codes should be unique" );
+                } );
+
+                it( "throws an excpetion if the amount is not positive", function() {
+                    expect( function() {
+                        var codes = variables.totp.generateRecoveryCodes( 0 );
+                    } ).toThrow( type = "totp.InvalidRecoveryCodeAmount" );
+
+                    expect( function() {
+                        var codes = variables.totp.generateRecoveryCodes( -2 );
+                    } ).toThrow( type = "totp.InvalidRecoveryCodeAmount" );
+                } );
+            } );
+
             it( "can use a generated secret to generate and verify a code", function() {
                 var secret = variables.totp.generateSecret();
                 var code = variables.totp.generateCode( secret );
