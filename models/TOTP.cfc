@@ -188,6 +188,12 @@ component singleton accessors="true" {
         numeric time = variables.instant.now().getEpochSecond(),
         numeric timePeriod = 30
     ) {
+        if ( arguments.digits <= 0 ) {
+            throw(
+                type = "totp.InvalidDigitAmount",
+                message = "You must generate a code with a positive amount of digits."
+            );
+        }
         var counter = floor( arguments.time / arguments.timePeriod );
         var hash = generateHash( arguments.secret, counter, arguments.algorithm );
         return getDigitsFromHash( hash, arguments.digits );
@@ -247,6 +253,10 @@ component singleton accessors="true" {
         required numeric counter,
         string algorithm = "SHA1"
     ) {
+        // code should have a minimal length. Empty strings should not generate exceptions but just return false
+        if ( !arguments.code.len() ) {
+            return false;
+        }
         var hash = generateHash( arguments.secret, arguments.counter, arguments.algorithm );
         return getDigitsFromHash( hash, arguments.code.len() ) == arguments.code;
     }
