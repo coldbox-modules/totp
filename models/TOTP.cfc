@@ -254,7 +254,9 @@ component singleton accessors="true" {
         string algorithm = "SHA1"
     ) {
         // code should have a minimal length. Empty strings should not generate exceptions but just return false
-        if ( !arguments.code.len() ) return false;
+        if ( !arguments.code.len() ) {
+            return false;
+        }
         var hash = generateHash( arguments.secret, arguments.counter, arguments.algorithm );
         return getDigitsFromHash( hash, arguments.code.len() ) == arguments.code;
     }
