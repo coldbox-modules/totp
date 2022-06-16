@@ -34,6 +34,12 @@ component singleton accessors="true" {
         config[ "secret" ] = generateSecret( arguments.length );
         config[ "url" ] = generateUrl( arguments.email, arguments.issuer, config.secret );
         config[ "qrCode" ] = generateQRCode( config.url, arguments.width, arguments.height );
+
+        // Lucee does not generate the same base64 string on the first call of `toBase64`.
+        // We call it here once so that user-land code gets the correct value if they call `toBase64`.
+        // https://luceeserver.atlassian.net/browse/LDEV-3964
+        toBase64( config[ "qrCode" ] );
+
         return config;
     }
 

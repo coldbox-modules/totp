@@ -212,6 +212,18 @@ component extends="testbox.system.BaseSpec" {
                 expect( isImage( config.qrCode ) ).toBeTrue( "An image should have been returned" );
                 expect( variables.totp.getBarcodeService().decode( config.qrCode ) ).toBe( config.url );
             } );
+
+            it( "generates the same base64 string from the QR code multiple times", function() {
+                var email = "john@example.com";
+                var issuer = "Example Company";
+                var config = variables.totp.generate( email, issuer );
+                var firstBase64 = toBase64( config.qrCode );
+                var secondBase64 = toBase64( config.qrCode );
+                expect( firstBase64 ).toBe(
+                    secondBase64,
+                    "toBase64 should return the same value every time it is called."
+                );
+            } );
         } );
     }
 
