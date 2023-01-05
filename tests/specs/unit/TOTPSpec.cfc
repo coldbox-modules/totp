@@ -109,6 +109,23 @@ component extends="testbox.system.BaseSpec" {
                         )
                     ).toBeFalse();
                 } );
+
+                it( "fails to verify a code that is not the expected length", function() {
+                    var secret = "EX47GINFPBK5GNLYLILGD2H6ZLGJNNWB";
+                    var timeToRunAt = 1567975936;
+                    var correctCode = "862707";
+                    var timePeriod = 30;
+
+                    expect(
+                        variables.totp.verifyCode(
+                            secret,
+                            7, // 7 is one of the correct answers
+                            "SHA1",
+                            timeToRunAt,
+                            timePeriod
+                        )
+                    ).toBeFalse();
+                } );
             } );
 
             describe( "generateSecret", function() {

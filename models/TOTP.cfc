@@ -227,6 +227,8 @@ component singleton accessors="true" {
      * @allowedTimePeriodDiscrepancy The number of periods, before and after, a code is considered valid.
      *                               By default, a code is valid for 30 seconds before to 30 seconds after its valid period for a total of 90 seconds.
      *                               Default: 1
+     * @digits                       The number of digits that should be passed in.  Used to not allow users to supply a one-digit code to try and fool the system.
+     *                               Default: 6
      *
      * @returns                      True, if the code is valid. False, otherwise.
      */
@@ -236,7 +238,8 @@ component singleton accessors="true" {
         string algorithm = "SHA1",
         numeric time = variables.instant.now().getEpochSecond(),
         numeric timePeriod = 30,
-        numeric allowedTimePeriodDiscrepancy = 1
+        numeric allowedTimePeriodDiscrepancy = 1,
+        numeric digits = 6
     ) {
         var currentBucket = floor( arguments.time / arguments.timePeriod );
 
@@ -247,7 +250,8 @@ component singleton accessors="true" {
                 arguments.secret,
                 arguments.code,
                 currentBucket + i,
-                arguments.algorithm
+                arguments.algorithm,
+                arguments.digits
             ) || success;
         }
         return success;
@@ -257,14 +261,21 @@ component singleton accessors="true" {
         required string secret,
         required string code,
         required numeric counter,
-        string algorithm = "SHA1"
+        string algorithm = "SHA1",
+        numeric digits = 6
     ) {
         // code should have a minimal length. Empty strings should not generate exceptions but just return false
-        if ( !arguments.code.len() ) {
+        if ( !len( arguments.code ) ) {
             return false;
         }
+
+        // code must match the required amount of digits.  If not, return false.
+        if ( len( arguments.code ) != arguments.digits ) {
+            return false;
+        }
+
         var hash = generateHash( arguments.secret, arguments.counter, arguments.algorithm );
-        return getDigitsFromHash( hash, arguments.code.len() ) == arguments.code;
+        return getDigitsFromHash( hash, arguments.digits ) == arguments.code;
     }
 
     private string function generateHash( required string secret, required numeric counter, string algorithm = "SHA1" ) {
