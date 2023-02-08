@@ -17,6 +17,12 @@
 - [totp-generator](https://github.com/bellstrand/totp-generator)
 - [Base32](https://github.com/bennadel/Base32.cfc)
 
+### Installation
+
+Install via CommandBox and ForgeBox: `box install totp`
+
+If you install manually, you need to download the [CFzxing library](https://github.com/alanquinlan/cfzxing) to `/modules/CFzxing`.
+
 ### Usage
 
 Obtain a new instance of TOTP using WireBox or simplying by creating a new instance (`new TOTP()`).
