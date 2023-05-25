@@ -157,7 +157,7 @@ component extends="testbox.system.BaseSpec" {
                         secret = secret
                     );
                     expect( totpUrl ).toBe(
-                        "otpauth://totp/#encodeForURL( issuer )#:#email#?secret=#secret#&issuer=#encodeForURL( issuer )#"
+                        "otpauth://totp/Example%20Company:john@example.com?secret=#secret#&issuer=Example%20Company"
                     );
                 } );
             } );
@@ -223,7 +223,7 @@ component extends="testbox.system.BaseSpec" {
                 expect( config.secret ).toMatchWithCase( "^[A-Z2-7]+=*$", "Secret must be a valid Base32 string." );
                 expect( config ).toHaveKey( "url" );
                 expect( config.url ).toBe(
-                    "otpauth://totp/#encodeForURL( issuer )#:#email#?secret=#config.secret#&issuer=#encodeForURL( issuer )#"
+                    "otpauth://totp/Example%20Company:john@example.com?secret=#config.secret#&issuer=Example%20Company"
                 );
                 expect( config ).toHaveKey( "qrCode" );
                 expect( isImage( config.qrCode ) ).toBeTrue( "An image should have been returned" );

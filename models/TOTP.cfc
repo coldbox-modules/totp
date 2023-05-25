@@ -77,13 +77,13 @@ component singleton accessors="true" {
         return arrayToList(
             [
                 "otpauth://totp/",
-                encodeForURL( arguments.issuer ),
+                urlEncodedFormat( arguments.issuer ),
                 ":",
                 arguments.email,
                 "?secret=",
                 arguments.secret,
                 "&issuer=",
-                encodeForURL( arguments.issuer )
+                urlEncodedFormat( arguments.issuer )
             ],
             ""
         );
