@@ -35,7 +35,7 @@
     <h1 class="text-7xl font-bold">TOTP Example</h1>
 
     <figure class="flex flex-col mb-4">
-        <img class="mx-auto w-64 h-64" src="data:image/png;base64,#toBase64(application.totpConfig.qrCode)#" alt="#application.totpConfig.url#" />
+        <img class="mx-auto w-64 h-64" src="data:image/png;base64,#toBase64(imageGetBufferedImage(application.totpConfig.qrCode))#" alt="#application.totpConfig.url#" />
         <figcaption class="text-gray-400 text-sm">#application.totpConfig.url#</figcaption>
     </figure>
 
